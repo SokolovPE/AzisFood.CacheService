@@ -135,5 +135,25 @@ namespace AzisFood.CacheService.Redis.Implementations
             span.Finish();
             return result;
         }
+
+        public async Task<bool> HashRemoveAsync<T>(RedisValue key, CommandFlags flags = CommandFlags.FireAndForget)
+        {
+            var span = _tracer.BuildSpan("redis-cache-service.hset-remove").WithTag(Tags.DbType, "Redis")
+                .AsChildOf(_tracer.ActiveSpan).Start();
+            var entityKey = HashSetExtensions.GetHashKey<T>();
+            var result = await Connection.GetDatabase().HashDeleteAsync(entityKey, key, flags);
+            span.Finish();
+            return result;
+        }
+
+        public async Task<long> HashRemoveManyAsync<T>(RedisValue[] keys, CommandFlags flags = CommandFlags.FireAndForget)
+        {
+            var span = _tracer.BuildSpan("redis-cache-service.hset-remove-many").WithTag(Tags.DbType, "Redis")
+                .AsChildOf(_tracer.ActiveSpan).Start();
+            var entityKey = HashSetExtensions.GetHashKey<T>();
+            var result = await Connection.GetDatabase().HashDeleteAsync(entityKey, keys, flags);
+            span.Finish();
+            return result;
+        }
     }
 }

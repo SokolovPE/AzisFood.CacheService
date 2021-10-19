@@ -60,7 +60,7 @@ namespace AzisFood.CacheService.Redis.Interfaces
         /// </summary>
         /// <param name="key">The key of the string</param>
         /// <param name="flags">Flags of operation</param>
-        /// <returns>Status of set operation</returns>
+        /// <returns>Status of del operation</returns>
         Task<bool> RemoveAsync(RedisKey key, CommandFlags flags = CommandFlags.FireAndForget);
 
         /// <summary>
@@ -97,5 +97,23 @@ namespace AzisFood.CacheService.Redis.Interfaces
         /// <typeparam name="T">Type of entity</typeparam>
         /// <returns>Status of set operation</returns>
         Task<bool> HashAppendAsync<T>(T value, CommandFlags flags = CommandFlags.FireAndForget);
+
+        /// <summary>
+        /// Remove entry from hashset
+        /// </summary>
+        /// <param name="key">Entity entry key to be removed</param>
+        /// <param name="flags">Flags of operation</param>
+        /// <typeparam name="T">Type of entity</typeparam>
+        /// <returns>Status of del operation</returns>
+        Task<bool> HashRemoveAsync<T>(RedisValue key, CommandFlags flags = CommandFlags.FireAndForget);
+
+        /// <summary>
+        /// Remove entries from hashset
+        /// </summary>
+        /// <param name="keys">Entity entry keys to be removed</param>
+        /// <param name="flags">Flags of operation</param>
+        /// <typeparam name="T">Type of entity</typeparam>
+        /// <returns>Status of del operation</returns>
+        Task<long> HashRemoveManyAsync<T>(RedisValue[] keys, CommandFlags flags = CommandFlags.FireAndForget);
     }
 }
