@@ -115,5 +115,13 @@ namespace AzisFood.CacheService.Redis.Interfaces
         /// <typeparam name="T">Type of entity</typeparam>
         /// <returns>Status of del operation</returns>
         Task<long> HashRemoveManyAsync<T>(RedisValue[] keys, CommandFlags flags = CommandFlags.FireAndForget);
+
+        /// <summary>
+        /// Remove all entries from hashset
+        /// </summary>
+        /// <param name="flags">Flags of operation</param>
+        /// <typeparam name="T">Type of entity</typeparam>
+        /// <returns>Status of del operation</returns>
+        Task<bool> HashDropAsync<T>(CommandFlags flags = CommandFlags.FireAndForget);
     }
 }

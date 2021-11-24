@@ -155,5 +155,15 @@ namespace AzisFood.CacheService.Redis.Implementations
             span.Finish();
             return result;
         }
+        
+        public async Task<bool> HashDropAsync<T>(CommandFlags flags = CommandFlags.FireAndForget)
+        {
+            var span = _tracer.BuildSpan("redis-cache-service.hset-drop").WithTag(Tags.DbType, "Redis")
+                .AsChildOf(_tracer.ActiveSpan).Start();
+            var entityKey = HashSetExtensions.GetHashKey<T>();
+            var result = await Connection.GetDatabase().KeyDeleteAsync(entityKey, flags);
+            span.Finish();
+            return result;
+        }
     }
 }
