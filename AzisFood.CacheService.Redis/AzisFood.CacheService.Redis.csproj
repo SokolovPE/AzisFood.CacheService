@@ -4,13 +4,11 @@
         <TargetFramework>net5.0</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Title>AzisFood.CacheService</Title>
-        <PackageVersion>1.0.0.5</PackageVersion>
+        <PackageVersion>1.0.0.6</PackageVersion>
         <Authors>AzisFood</Authors>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AzisFood.MQ.Abstractions" Version="1.0.0" />
-      <PackageReference Include="MassTransit" Version="7.2.1" />
       <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
       <PackageReference Include="OpenTracing.Contrib.NetCore" Version="0.7.1" />
       <PackageReference Include="StackExchange.Redis" Version="2.2.50" />

@@ -13,6 +13,8 @@ namespace AzisFood.CacheService.Redis.Extensions
     /// </summary>
     public static class HashSetExtensions
     {
+        private const string DefaultHashEntryKeyMember = "Id";
+        
         /// <summary>
         /// Returns value of hash entry key
         /// </summary>
@@ -22,13 +24,22 @@ namespace AzisFood.CacheService.Redis.Extensions
         /// <exception cref="ArgumentException">Entities without HashEntryKey attribute are not supported</exception>
         public static string GetHashEntryKey<T>(this T entry)
         {
-            var hashEntryKeyMember = typeof(T).GetMembers()
+            var typeMembers = typeof(T).GetMembers();
+            var hashEntryKeyMember = typeMembers
                 .FirstOrDefault(m => m.GetCustomAttributes(typeof(HashEntryKey), false).Any());
+
+            if (hashEntryKeyMember != default) 
+                return hashEntryKeyMember.GetValue(entry).ToString();
             
-            if (hashEntryKeyMember == default || hashEntryKeyMember == null)
+            // If HashEntryKeyMember not set - find id member
+            hashEntryKeyMember = typeMembers.FirstOrDefault(m => m.Name == DefaultHashEntryKeyMember);
+            if (hashEntryKeyMember == default)
             {
-                throw new ArgumentException($"Entity {nameof(T)} must contain HashEntryKey attribute");
+                throw new ArgumentException(
+                    $"Entity {nameof(T)} must contain {nameof(HashEntryKey)} attribute " +
+                    $"or <{DefaultHashEntryKeyMember}> member");
             }
+
             return hashEntryKeyMember.GetValue(entry).ToString();
         }
 
