@@ -70,24 +70,9 @@ namespace AzisFood.CacheService.Redis.Extensions
         /// <exception cref="ArgumentException">Entities without HashEntryKey attribute are not supported</exception>
         public static IEnumerable<HashEntry> ConvertToHashEntryList<T>(this IEnumerable<T> instance)
         {
-            // Getting of key duplicates GetHashEntryKey, but in this case key member should be found only once
-            // because of reflection
-            var hashEntryKeyMembers = typeof(T).GetMembers()
-                .Where(m => m.GetCustomAttributes(typeof(HashEntryKey), false).Any()).ToArray();
-            if (!hashEntryKeyMembers.Any())
-            {
-                throw new ArgumentException($"Entity {nameof(T)} must contain HashEntryKey attribute");
-            }
-
-            // If there's more than one parameter defined take the one which is not belongs to Id field
-            var hashEntryKeyMember = hashEntryKeyMembers.Length > 1
-                ? hashEntryKeyMembers.First(m => m.Name != "Id")
-                : hashEntryKeyMembers
-                    .First();
-
             var result = instance.Select(entry =>
             {
-                var key = hashEntryKeyMember.GetValue(entry).ToString();
+                var key = entry.GetHashEntryKey();
                 var value = JsonConvert.SerializeObject(entry);
                 return new HashEntry(key, value);
             });
