@@ -27,7 +27,7 @@ namespace AzisFood.CacheService.Redis.Interfaces
             CommandFlags flags = CommandFlags.FireAndForget);
 
         /// <summary>
-        /// Set json converted value to redis cache
+        /// Set value to redis cache
         /// </summary>
         /// <param name="key">The key of the string</param>
         /// <param name="value">The value to set</param>

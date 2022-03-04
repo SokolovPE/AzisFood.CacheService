@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AzisFood.CacheService.Redis.Extensions;
 using AzisFood.CacheService.Redis.Interfaces;
-using Newtonsoft.Json;
+using MessagePack;
 using OpenTracing;
 using OpenTracing.Tag;
 using StackExchange.Redis;
@@ -43,9 +43,9 @@ namespace AzisFood.CacheService.Redis.Implementations
         {
             var span = _tracer.BuildSpan("redis-cache-service.set").AsChildOf(_tracer.ActiveSpan).Start();
             var serializeSpan = _tracer.BuildSpan("serialize").AsChildOf(span).Start();
-            var jsonValue = JsonConvert.SerializeObject(value);
+            var serializedValue = MessagePackSerializer.Serialize(value);
             serializeSpan.Finish();
-            var result = await SetRawAsync(key, jsonValue, expiry, flags);
+            var result = await SetRawAsync(key, serializedValue, expiry, flags);
             span.Finish();
             return result;
         }
@@ -64,7 +64,7 @@ namespace AzisFood.CacheService.Redis.Implementations
             var span = _tracer.BuildSpan("redis-cache-service.get").AsChildOf(_tracer.ActiveSpan).Start();
             var result = await Connection.GetDatabase().StringGetAsync(key, flags);
             var deserializeSpan = _tracer.BuildSpan("deserialize").AsChildOf(span).Start();
-            var retVal = result == RedisValue.Null ? default : JsonConvert.DeserializeObject<T>(result);
+            var retVal = result == RedisValue.Null ? default : MessagePackSerializer.Deserialize<T>(result);
             deserializeSpan.Finish();
             span.Finish();
             return retVal;
@@ -116,7 +116,7 @@ namespace AzisFood.CacheService.Redis.Implementations
                 return null;
             }
             var deserializeSpan = _tracer.BuildSpan("deserialize").AsChildOf(span).Start();
-            var result = JsonConvert.DeserializeObject<T>(entry);
+            var result = MessagePackSerializer.Deserialize<T>(entry);
             deserializeSpan.Finish();
             span.Finish();
             return result;
@@ -129,7 +129,7 @@ namespace AzisFood.CacheService.Redis.Implementations
             var entityKey = HashSetExtensions.GetHashKey<T>();
             var entryKey = value.GetHashEntryKey();
             var serializeSpan = _tracer.BuildSpan("serialize").AsChildOf(span).Start();
-            var hashValue = JsonConvert.SerializeObject(value);
+            var hashValue = MessagePackSerializer.Serialize(value);
             serializeSpan.Finish();
             var result = await Connection.GetDatabase().HashSetAsync(entityKey, entryKey, hashValue);
             span.Finish();

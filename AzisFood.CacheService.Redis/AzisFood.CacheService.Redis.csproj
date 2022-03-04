@@ -4,12 +4,12 @@
         <TargetFramework>net6.0</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Title>AzisFood.CacheService</Title>
-        <PackageVersion>1.0.0.8</PackageVersion>
+        <PackageVersion>1.0.0.9</PackageVersion>
         <Authors>AzisFood</Authors>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="MessagePack" Version="2.3.85" />
       <PackageReference Include="OpenTracing.Contrib.NetCore" Version="0.8.0" />
       <PackageReference Include="StackExchange.Redis" Version="2.2.88" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />

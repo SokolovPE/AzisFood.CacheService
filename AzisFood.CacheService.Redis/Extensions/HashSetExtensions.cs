@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using AzisFood.CacheService.Abstractions.Models;
-using Newtonsoft.Json;
+using MessagePack;
 using StackExchange.Redis;
 
 namespace AzisFood.CacheService.Redis.Extensions
@@ -73,7 +73,7 @@ namespace AzisFood.CacheService.Redis.Extensions
             var result = instance.Select(entry =>
             {
                 var key = entry.GetHashEntryKey();
-                var value = JsonConvert.SerializeObject(entry);
+                var value = MessagePackSerializer.Serialize(entry);
                 return new HashEntry(key, value);
             });
             
@@ -89,7 +89,7 @@ namespace AzisFood.CacheService.Redis.Extensions
         public static IEnumerable<T> ConvertToCollection<T>(this IEnumerable<HashEntry> instance)
         {
             // TODO: validation + exceptions
-            return instance.Select(entry => JsonConvert.DeserializeObject<T>(entry.Value));
+            return instance.Select(entry => MessagePackSerializer.Deserialize<T>(entry.Value));
         }
 
         /// <summary>
